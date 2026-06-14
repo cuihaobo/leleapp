@@ -2,11 +2,15 @@
   "name": "leleapp",
   "type": "module",
   "scripts": {
-    "dev": "wrangler dev",
+    "dev": "concurrently --restart-tries 5 --restart-after 2000 \"npm run dev:api\" \"npm run dev:web\"",
+    "dev:api": "wrangler dev",
+    "build:web": "cd web && npm run build",
+    "dev:web": "cd web && npm run dev",
     "deploy": "wrangler deploy --minify",
     "cf-typegen": "wrangler types --env-interface CloudflareBindings"
   },
   "dependencies": {
+    "concurrently": "^10.0.3",
     "hono": "^4.12.23"
   },
   "devDependencies": {
