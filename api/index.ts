@@ -10,6 +10,10 @@ const userSchema = z.object({
   name: z.string().min(2).max(100),
 });
 
+type User = z.infer<typeof userSchema>;
+
+const users: User[] = [];
+
 app.get("/api", (c) => {
   return c.text("Hello Lele!");
 });
@@ -19,13 +23,11 @@ app.get("/api/bye", (c) => {
 });
 app.post("/api/users", zValidator("json", userSchema), async (c) => {
   const body = await c.req.json();
-  // console.log("Received request body:", body);
-  // const userData = userSchema.safeParse(body);
-  // if (!userData.success) {
-  //   return c.json({ error: "Invalid user data", details: userData.error }, 400);
-  // }
-  // console.log("Received user data:", userData.data);
-  return c.json({ message: "User created!" });
+  users.push(body);
+  return c.json({ message: "User created!", data: body });
 });
 
+app.get("/api/users", (c) => {
+  return c.json({ message: "Users retrieved!", data: users });
+});
 export default app;
